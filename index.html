@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilförmån</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex">
+                        <div class="flex-shrink-0 flex items-center">
+                            <span class="text-xl font-bold">Bilförmån</span>
+                        </div>
+                        <nav class="ml-8 flex space-x-8">
+                            <a href="#" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-blue-600 border-b-2 border-blue-600">
+                                <i class="fas fa-calculator mr-2"></i>
+                                Kalkylator
+                            </a>
+                            <a href="#" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-car mr-2"></i>
+                                Bästa bilarna
+                            </a>
+                            <a href="#" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-building mr-2"></i>
+                                Kommuner
+                            </a>
+                            <a href="#" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Om
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <!-- Page Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Förmånsbil - Kalkylator</h1>
+                <p class="text-lg text-blue-600">Här tar du enkelt reda på vad din förmånsbil kostar!</p>
+                <p class="text-gray-600 mt-2">Vi räknar ut hur mycket som dras på din lön och vad du får ut netto efter förmånskostnaden.</p>
+            </div>
+
+            <!-- Tabs -->
+            <nav class="border-b border-gray-200 mb-8">
+                <div class="max-w-3xl mx-auto">
+                    <div class="grid grid-cols-3 gap-4">
+                        <button id="tab-lon" class="tab-button text-center py-4 border-b-2 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+                            Lön och kommun
+                        </button>
+                        <button id="tab-bil" class="tab-button text-center py-4 border-b-2 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+                            Bilförmån
+                        </button>
+                        <button id="tab-resultat" class="tab-button text-center py-4 border-b-2 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+                            Resultat
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Lön och kommun Form -->
+            <div id="lon-section" class="max-w-3xl mx-auto">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-8">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6">Ange din lön och hemkommun</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <label for="bruttolön" class="block text-sm font-medium text-gray-700 mb-2">Bruttolön per månad</label>
+                                <div class="mt-1 relative rounded-md shadow-sm">
+                                    <input type="number" 
+                                           name="bruttolön" 
+                                           id="bruttolön" 
+                                           class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-4 pr-12 py-3 sm:text-lg border-gray-300 rounded-lg" 
+                                           placeholder="0">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-lg">kr</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <label for="kommun" class="block text-sm font-medium text-gray-700 mb-2">Din hemkommun</label>
+                                <select id="kommun" 
+                                        name="kommun" 
+                                        class="mt-1 block w-full pl-3 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg rounded-lg">
+                                    <option value="">Välj kommun</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Resultat -->
+                        <div id="nettolon-resultat" class="hidden mt-8">
+                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8 border border-blue-100">
+                                <h4 class="text-lg font-medium text-gray-900 mb-4">Din nettolön i <span id="vald-kommun" class="font-semibold text-blue-600"></span></h4>
+                                <div class="text-4xl font-bold text-gray-900 mb-6 flex items-baseline">
+                                    <span id="nettolon-belopp"></span>
+                                    <span class="text-lg text-gray-500 ml-2">kr/månad</span>
+                                </div>
+                                <div class="space-y-3 text-sm text-gray-600 divide-y divide-gray-200">
+                                    <div class="space-y-2"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex justify-end">
+                            <button id="next-button" type="button" 
+                                    class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    disabled>
+                                Nästa
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bilförmån Section -->
+            <div id="bil-section" class="max-w-3xl mx-auto hidden">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-8">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6">Bilförmån</h3>
+                        
+                        <!-- Val av förmånsvärde -->
+                        <div id="formansvarde-val" class="mb-8">
+                            <p class="text-lg font-medium text-gray-900 mb-6">Har du redan ett beräknat förmånsvärde för din bil?</p>
+                            
+                            <!-- Direkt inmatning av förmånsvärde -->
+                            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                                <label for="kant-formansvarde" class="block text-sm font-medium text-gray-700 mb-2">Fyll i förmånsvärdet här</label>
+                                <div class="mt-1 relative rounded-md shadow-sm">
+                                    <input type="number" id="kant-formansvarde" name="kant-formansvarde"
+                                           class="mt-1 block w-full pl-3 pr-12 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg rounded-lg"
+                                           placeholder="0">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-lg">kr/mån</span>
+                                    </div>
+                                </div>
+                                <button type="button" id="use-kant-formansvarde"
+                                        class="mt-4 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                    Använd detta förmånsvärde
+                                </button>
+                            </div>
+
+                            <!-- Alternativ för att beräkna nytt förmånsvärde -->
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <p class="text-base text-gray-900 mb-4">Har du inte ett förmånsvärde hjälper vi dig att räkna ut det.</p>
+                                <button type="button" id="show-formansvarde-calc"
+                                        class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                    Beräkna förmånsvärde
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Formulär för beräkning av förmånsvärde (dolt från början) -->
+                        <div id="formansvarde-calc" class="hidden">
+                            <form id="bilformanForm" class="space-y-6">
+                                <div class="bg-gray-50 rounded-lg p-6">
+                                    <label for="bilmarke" class="block text-sm font-medium text-gray-700 mb-2">Bilmärke</label>
+                                    <select id="bilmarke" name="bilmarke" required
+                                            class="mt-1 block w-full pl-3 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg rounded-lg">
+                                        <option value="">Välj bilmärke</option>
+                                    </select>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-6">
+                                    <label for="modell" class="block text-sm font-medium text-gray-700 mb-2">Modell</label>
+                                    <select id="modell" name="modell" required
+                                            class="mt-1 block w-full pl-3 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg rounded-lg">
+                                        <option value="">Välj modell</option>
+                                    </select>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-6">
+                                    <label for="tillverkningsar" class="block text-sm font-medium text-gray-700 mb-2">Tillverkningsår</label>
+                                    <select id="tillverkningsar" name="tillverkningsar" required
+                                            class="mt-1 block w-full pl-3 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg rounded-lg">
+                                        <option value="">Välj år</option>
+                                    </select>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-6">
+                                    <label for="drivmedel" class="block text-sm font-medium text-gray-700 mb-2">Drivmedel</label>
+                                    <select id="drivmedel" name="drivmedel" required
+                                            class="mt-1 block w-full pl-3 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg rounded-lg">
+                                        <option value="">Välj drivmedel</option>
+                                    </select>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-6">
+                                    <label for="registreringsdatum" class="block text-sm font-medium text-gray-700 mb-2">När registrerades bilen (togs i trafik) för första gången?</label>
+                                    <input type="date" id="registreringsdatum" name="registreringsdatum" required
+                                           class="mt-1 block w-full pl-3 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg rounded-lg">
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-6">
+                                    <label for="fordonsskatt" class="block text-sm font-medium text-gray-700 mb-2">Fordonsskatt per år</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <input type="number" id="fordonsskatt" name="fordonsskatt" required
+                                               class="mt-1 block w-full pl-3 pr-12 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg rounded-lg"
+                                               placeholder="0">
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-lg">kr</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-6">
+                                    <label for="extrautrustning" class="block text-sm font-medium text-gray-700 mb-2">Extrautrustning (totalt belopp)</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <input type="number" id="extrautrustning" name="extrautrustning" required
+                                               class="mt-1 block w-full pl-3 pr-12 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg rounded-lg"
+                                               placeholder="0">
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-lg">kr</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-4">Körs bilen minst 3 000 mil i tjänsten per år?</label>
+                                    <div class="space-y-4">
+                                        <div class="flex items-center">
+                                            <input type="radio" id="tjanstekm-ja" name="tjanstekm" value="ja"
+                                                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                            <label for="tjanstekm-ja" class="ml-3 block text-sm font-medium text-gray-700">Ja</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="radio" id="tjanstekm-nej" name="tjanstekm" value="nej" checked
+                                                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                            <label for="tjanstekm-nej" class="ml-3 block text-sm font-medium text-gray-700">Nej</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-8 flex justify-end space-x-4">
+                                    <button type="button" id="back-to-lon"
+                                            class="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-lg shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                        <i class="fas fa-arrow-left mr-2"></i>
+                                        Tillbaka
+                                    </button>
+                                    <button type="button" id="show-result"
+                                            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            disabled>
+                                        Visa resultat
+                                        <i class="fas fa-arrow-right ml-2"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultat Section -->
+            <div id="resultat-section" class="max-w-3xl mx-auto hidden">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-8">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-6">Förmånsvärde för din valda bil</h3>
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8 border border-blue-100">
+                            <div class="grid grid-cols-1 gap-6">
+                                <div>
+                                    <p class="text-sm text-gray-500 mb-1">Vald bil</p>
+                                    <p id="vald-bil" class="text-lg font-semibold text-gray-900"></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500 mb-1">Nybilspris</p>
+                                    <p id="nybilspris" class="text-lg font-semibold text-gray-900"></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500 mb-1">Förmånsgrundande pris</p>
+                                    <p id="formansgrundandePris" class="text-lg font-semibold text-gray-900"></p>
+                                </div>
+                                <div class="border-t border-blue-200 pt-4">
+                                    <p class="text-sm text-gray-500 mb-1">Förmånsvärde per år</p>
+                                    <p id="arsforman" class="text-2xl font-bold text-blue-600"></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500 mb-1">Förmånsvärde per månad</p>
+                                    <p id="manadsforman" class="text-3xl font-bold text-blue-600"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-8 flex justify-end space-x-4">
+                            <button type="button" id="back-to-bil"
+                                    class="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-lg shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                Tillbaka
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js" type="module"></script>
+</body>
+</html> 

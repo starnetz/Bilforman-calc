@@ -1,0 +1,125 @@
+# Anslutning till SKV:s API för bilförmånsberäkning
+
+Detta dokument beskriver hur man ansluter till Skatteverkets API för att hämta bilmodeller och deras priser.
+
+## Förutsättningar
+
+- OAuth2-klient-ID från SKV
+- OAuth2-klienthemlighet från SKV
+- Tillgång till SKV:s testmiljö eller produktionsmiljö
+
+## API-URL:er
+
+- Testmiljö: `https://api.test.skatteverket.se`
+- Produktionsmiljö: `https://api.skatteverket.se`
+
+## Anslutningsrutin
+
+### 1. Hämta access token
+
+Först behöver du hämta en access token genom att göra en POST-förfrågan till token-endpointen:
+
+```bash
+curl -X POST "https://api.test.skatteverket.se/oauth2/v1/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials" \
+  -d "client_id=361f5e9b75dcc0875080b65628ce0023e9bb24cd7902dc67" \
+  -d "client_secret=aaedd9a768031bea5bc12fd7885bc645ad2e938d03870023e9bb24cd7902dc67"
+```
+
+### 2. Hämta bilmodeller
+
+När du har fått din access token kan du hämta bilmodeller genom att göra en GET-förfrågan till nybilspriser-endpointen:
+
+```bash
+curl -X GET "https://api.test.skatteverket.se/beskattning/bilforman/v2/nybilspriser" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer DIN_ACCESS_TOKEN" \
+  -H "client_id: DITT_CLIENT_ID" \
+  -H "client_secret: DITT_CLIENT_SECRET" \
+  -H "skv_client_correlation_id: $(uuidgen)"
+```
+
+## Parametrar för nybilspriser-endpointen
+
+### Obligatoriska parametrar
+- `typ`: Biltyp (PERSONBIL, LATT_LASTBIL eller ALLA)
+
+### Valfria parametrar
+- `tillverkningsar`: Array av tillverkningsår
+- `bilmarke`: Bilmärke (max 256 tecken)
+- `endastmiljobilar`: Boolean (true/false)
+
+## Exempel på användning
+
+### Hämta alla personbilar
+```bash
+curl -X GET "https://api.test.skatteverket.se/beskattning/bilforman/v2/nybilspriser?typ=PERSONBIL" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer DIN_ACCESS_TOKEN" \
+  -H "client_id: DITT_CLIENT_ID" \
+  -H "client_secret: DITT_CLIENT_SECRET" \
+  -H "skv_client_correlation_id: $(uuidgen)"
+```
+
+### Hämta miljöbilar för ett specifikt år
+```bash
+curl -X GET "https://api.test.skatteverket.se/beskattning/bilforman/v2/nybilspriser?typ=PERSONBIL&tillverkningsar=2023&endastmiljobilar=true" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer DIN_ACCESS_TOKEN" \
+  -H "client_id: DITT_CLIENT_ID" \
+  -H "client_secret: DITT_CLIENT_SECRET" \
+  -H "skv_client_correlation_id: $(uuidgen)"
+```
+
+## Svarsformat
+
+API:et returnerar data i JSON-format med följande struktur:
+
+```json
+{
+  "bilmodeller": [
+    {
+      "modellkod": "20RR001",
+      "modell": "Cullinan",
+      "nybilspris": 3540000,
+      "justering": -6100,
+      "tillverkningsar": 2020,
+      "bilmarke": "Rolls Royce",
+      "biltyp": "PERSONBIL",
+      "drivmedel": "Bensin",
+      "senastUppdaterad": "2023-06-20",
+      "formansgrundandepris": 3540000
+    }
+  ]
+}
+```
+
+### Fältbeskrivningar
+
+- `modellkod`: Unik kod för modellen
+- `modell`: Modellnamn
+- `nybilspris`: Listpris
+- `justering`: Eventuell justering av priset
+- `tillverkningsar`: Tillverkningsår
+- `bilmarke`: Bilmärke
+- `biltyp`: PERSONBIL eller LATT_LASTBIL
+- `drivmedel`: Drivmedelstyp (t.ex. Bensin, Diesel, Elhybrid, Laddhybrid)
+- `senastUppdaterad`: Senaste uppdateringsdatum
+- `formansgrundandepris`: Grundande pris för förmånsberäkning
+
+## Felhantering
+
+Om något går fel returnerar API:et ett felmeddelande i JSON-format. Vanliga felmeddelanden inkluderar:
+
+- "Invalid client id or secret" - Felaktiga autentiseringsuppgifter
+- "Resource not found" - Endpointen eller resursen kunde inte hittas
+- "Unauthorized" - Saknad eller ogiltig access token
+
+## Säkerhet
+
+- Använd alltid HTTPS för API-anrop
+- Skydda dina klientuppgifter (client_id och client_secret)
+- Använd en säker metod för att lagra och hantera access tokens
+- Rotera access tokens regelbundet
+- Använd unika correlation IDs för varje anrop för spårning och felsökning 
